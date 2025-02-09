@@ -4,9 +4,9 @@ param project = 'enterp'
 param webApps = [
   'app-${project}'
 ]
-param webAppResourceGroup = ''
-param virtualNetworkResourceGroup = ''
-param virtualNetwork = ''
+param webAppResourceGroup = 'RG_WEBAPP-CENTRALUS'
+param virtualNetworkResourceGroup = 'RG_NETWORK-CENTRALUS'
+param virtualNetwork = 'learn-vnet'
 param ingressSubnet = 'HostSubnet'
 param egressSubnet = 'OutboundSubnet'
 
