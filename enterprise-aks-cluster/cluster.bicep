@@ -4,7 +4,7 @@ targetScope = 'resourceGroup'
 param kubernetesClusterName string
 
 @description('Kubernetes cluster version.')
-@allowed(['1.29.9'])
+@allowed(['1.30.0'])
 param kubernetesClusterVersion string
 
 @description('Disk size (in GB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize.')
@@ -28,6 +28,19 @@ param subnet string
 
 param managedResourceGroup string
 
+
+@allowed(['standard'])
+param kubeApiLoadBalancerSku string = 'standard'
+
+@allowed(['overlay'])
+param networkPluginMode string = 'overlay'
+
+param kubernetesServiceCidr string
+
+param kubernetesDnsServiceIp string
+
+
+
 var location = resourceGroup().location
 
 resource clusterPrivateDnsZone 'Microsoft.Network/privateDnsZones@2024-06-01' = {
@@ -36,8 +49,14 @@ resource clusterPrivateDnsZone 'Microsoft.Network/privateDnsZones@2024-06-01' = 
   properties: {}
 }
 
+resource ingressPrivateDnsZone 'Microsoft.Network/privateDnsZones@2024-06-01' = {
+  name: '${replace(kubernetesClusterName, '_', '-')}.${location}.learn.io'
+  location: 'Global'
+  properties: {}
+}
+
 resource networkLinks 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = [
-  for zone in [clusterPrivateDnsZone.name]: {
+  for zone in [clusterPrivateDnsZone.name, ingressPrivateDnsZone.name]: {
     name: '${zone}/link-${virtualNetwork}'
     location: 'Global'
     properties: {
@@ -122,7 +141,19 @@ resource cluster 'Microsoft.ContainerService/managedClusters@2024-09-02-preview'
       upgradeChannel: 'patch'
       nodeOSUpgradeChannel: 'NodeImage'
     }
+    ingressProfile: {
+      webAppRouting: {
+        enabled: true
+        nginx: {
+          defaultIngressControllerType: 'Internal'
+        }
+        dnsZoneResourceIds: [ingressPrivateDnsZone.id]
+      }
+    }
     nodeResourceGroup: managedResourceGroup
+    // nodeResourceGroupProfile: {
+    //   restrictionLevel: 'ReadOnly' desired feature (still preview)
+    // }
     dnsPrefix: replace(kubernetesClusterName, '_', '-')
     agentPoolProfiles: [
       {
@@ -147,13 +178,23 @@ resource cluster 'Microsoft.ContainerService/managedClusters@2024-09-02-preview'
       }
     ]
     networkProfile: {
-      loadBalancerSku: 'standard'
+      loadBalancerSku: kubeApiLoadBalancerSku
       networkPlugin: 'azure'
-      networkPluginMode: 'overlay'
+      networkPluginMode: networkPluginMode
       networkDataplane: 'azure'
       networkPolicy: 'none'
-      serviceCidr: '100.0.0.0/16'
-      dnsServiceIP: '100.0.0.10'
+      serviceCidr: kubernetesServiceCidr
+      dnsServiceIP: kubernetesDnsServiceIp
+      outboundType: 'userDefinedRouting'
+      loadBalancerProfile: {
+        outboundIPPrefixes: {
+          publicIPPrefixes: []
+        }
+        outboundIPs: {
+          publicIPs: []
+        }
+      }
+    
     }
     securityProfile: {
       imageCleaner: {
@@ -186,3 +227,9 @@ resource cluster 'Microsoft.ContainerService/managedClusters@2024-09-02-preview'
     }
   }
 }
+
+
+// resource extension 'Microsoft.KubernetesConfiguration/extensions@2023-05-01' = {}
+
+
+// resource config 'Microsoft.KubernetesConfiguration/fluxConfigurations@2024-04-01-preview'
