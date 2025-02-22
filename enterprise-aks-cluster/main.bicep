@@ -40,7 +40,7 @@ var location = deployment().location
 
 
 resource customerManagedRG 'Microsoft.Resources/resourceGroups@2024-11-01' = {
-  name: 'RG_ENTERPRISE_AKS-${location}'
+  name: 'RG_ENTERPRISE_AKS-${toUpper(location)}'
   location: location
   tags: loadJsonContent('../metadata.json')
   properties: {}
