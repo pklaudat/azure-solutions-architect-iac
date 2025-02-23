@@ -229,7 +229,4 @@ resource cluster 'Microsoft.ContainerService/managedClusters@2024-09-02-preview'
 }
 
 
-// resource extension 'Microsoft.KubernetesConfiguration/extensions@2023-05-01' = {}
-
-
-// resource config 'Microsoft.KubernetesConfiguration/fluxConfigurations@2024-04-01-preview'
+output name string = cluster.name

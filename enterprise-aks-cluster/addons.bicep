@@ -27,7 +27,8 @@ resource installArgoCd 'Microsoft.KubernetesConfiguration/fluxConfigurations@202
   name: 'argo-cd'
   scope: cluster
   properties: {
-    namespace: 'argo-cd'
+    scope: 'cluster'
+    namespace: 'flux-system'
     sourceKind: 'GitRepository'
     gitRepository: {
       url: gitRepoUrl
