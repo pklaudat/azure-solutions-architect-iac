@@ -1,0 +1,28 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: argo-cd
+  namespace: flux-system  # Flux HelmRelease should be in flux-system
+spec:
+  releaseName: argo-cd
+  targetNamespace: argo-cd  # This ensures the deployment happens in argo-cd namespace
+  interval: 5m  # Sync every 5 minutes
+  chart:
+    spec:
+      chart: argo-cd
+      version: 6.7.7  # Set a stable version
+      sourceRef:
+        kind: HelmRepository
+        name: argo-cd-repo
+        namespace: flux-system
+  install:
+    createNamespace: true
+  values:
+    server:
+      service:
+        type: LoadBalancer  # Expose Argo CD UI (optional)
+    configs:
+      params:
+        server.insecure: "true"
+    dex:
+      enabled: false  # Disable Dex if using external authentication

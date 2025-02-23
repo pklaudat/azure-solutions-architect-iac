@@ -1,0 +1,8 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: argo-cd-repo
+  namespace: flux-system  # Flux Helm sources must stay in flux-system
+spec:
+  interval: 10m
+  url: https://argoproj.github.io/argo-helm  # Official Argo CD Helm chart repo
