@@ -6,3 +6,4 @@ metadata:
 resources:
   - helmrepository.yaml
   - helmrelease.yaml
+namespace: argo-cd
