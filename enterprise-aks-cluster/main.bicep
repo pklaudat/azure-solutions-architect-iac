@@ -63,6 +63,16 @@ module aks 'cluster.bicep' = {
   }
 }
 
+module aksAddons 'addons.bicep' = {
+  name: 'enterprise-aks-addons'
+  scope: customerManagedRG
+  params: {
+    aksclustername: aks.outputs.name
+    gitRepoUrl: 'https://github.com/pklaudat/azure-bicep-core.git'
+    gitBranch: 'main'
+  }
+}
+
 
 
 
