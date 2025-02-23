@@ -1,6 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+metadata:
+  name: argo-cd
+  namespace: flux-system
 resources:
   - helmrepository.yaml
   - helmrelease.yaml
-namespace: argo-cd
