@@ -41,8 +41,10 @@ resource installArgoCd 'Microsoft.KubernetesConfiguration/fluxConfigurations@202
       'argo-cd': {
         path: './enterprise-aks-cluster/addons/argo-cd'
         prune: true
+        force: true
         wait: true
         syncIntervalInSeconds: 600
+        retryIntervalInSeconds: 60
       }
     }
   }
