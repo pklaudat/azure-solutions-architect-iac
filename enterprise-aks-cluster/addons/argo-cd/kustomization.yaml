@@ -6,3 +6,8 @@ metadata:
 resources:
   - helmrepository.yaml
   - helmrelease.yaml
+secretGenerator:
+  - name: argo-cd-oidc-secret
+    namespace: argo-cd
+    literals:
+      - oidc.azure.clientSecret=YOUR_CLIENT_SECRET  # Replace with actual secret
