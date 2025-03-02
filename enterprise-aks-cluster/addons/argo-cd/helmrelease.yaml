@@ -21,9 +21,9 @@ spec:
     server:
       ingress:
         enabled: true
-        ingressClassName: nginx  # Use Azure NGINX Ingress Controller
+        ingressClassName: webapprouting.kubernetes.azure.com  # Use Azure NGINX Ingress Controller
         annotations:
-          kubernetes.io/ingress.class: "nginx"
+          kubernetes.io/ingress.class: "webapprouting.kubernetes.azure.com"
         hosts:
           - host: ${argoUrl}  # Use Private DNS Zone name
             paths:
