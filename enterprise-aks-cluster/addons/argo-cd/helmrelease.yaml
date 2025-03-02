@@ -19,13 +19,26 @@ spec:
     createNamespace: true
   values:
     server:
-      service:
-        type: LoadBalancer  # Expose Argo CD UI (optional)
+      ingress:
+        enabled: true
+        ingressClassName: nginx  # Use Azure NGINX Ingress Controller
+        annotations:
+          kubernetes.io/ingress.class: "nginx"
+          nginx.ingress.kubernetes.io/ssl-redirect: "true"
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+        hosts:
+          - host: ${argoUrl}  # Set your Argo CD URL (Private DNS Zone)
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - ${argoUrl}
     configs:
       params:
-        server.insecure: "true"
+        server.insecure: "false"
       cm:
-        url: ${argoUrl}  # Set your external Argo CD URL
+        url: https://${argoUrl}  # Use private DNS name
         oidc.config: |
           name: Azure
           issuer: ${issuer}
