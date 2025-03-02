@@ -25,17 +25,16 @@ spec:
       params:
         server.insecure: "true"
       cm:
-        url: https://your-argo-cd-url  # Set your external Argo CD URL
+        url: ${argoUrl}  # Set your external Argo CD URL
         oidc.config: |
           name: Azure
           issuer: ${issuer}
           clientID: ${clientId}
-          clientSecret: ${clientSecret}  # Use a secret reference
+          clientSecret: ${clientSecret}
           requestedScopes: ["openid", "profile", "email"]
           requestedIDTokenClaims:
             groups:
               essential: true
-          cliClientID: YOUR_CLIENT_ID  # Ensure CLI access works
       rbac:
         policy.default: role:readonly  # Default role for users
     dex:
