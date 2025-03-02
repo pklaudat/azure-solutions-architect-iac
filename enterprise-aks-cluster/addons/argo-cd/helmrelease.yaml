@@ -24,21 +24,16 @@ spec:
         ingressClassName: nginx  # Use Azure NGINX Ingress Controller
         annotations:
           kubernetes.io/ingress.class: "nginx"
-          nginx.ingress.kubernetes.io/ssl-redirect: "true"
-          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
         hosts:
-          - host: ${argoUrl}  # Set your Argo CD URL (Private DNS Zone)
+          - host: ${argoUrl}  # Use Private DNS Zone name
             paths:
               - path: /
                 pathType: Prefix
-        tls:
-          - hosts:
-              - ${argoUrl}
     configs:
       params:
-        server.insecure: "false"
+        server.insecure: "true"  # Allow HTTP (No TLS)
       cm:
-        url: https://${argoUrl}  # Use private DNS name
+        url: http://${argoUrl}  # Use internal Private DNS Zone
         oidc.config: |
           name: Azure
           issuer: ${issuer}
