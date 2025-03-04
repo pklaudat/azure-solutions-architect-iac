@@ -4,6 +4,5 @@ metadata:
   name: argo-cd-kustomization
   namespace: flux-system
 resources:
-  - namespace.yaml
   - helmrepository.yaml
   - helmrelease.yaml
