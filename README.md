@@ -1,7 +1,7 @@
-# Azure Bicep Training Repository
+# Azure Solutions Architect Iac Modules for Training
 
 ## Overview
-This repository contains core Azure Bicep modules designed for training resources in the Solutions Architect learning path. The modules help to spin up enterprise-grade labs on Azure, enabling hands-on experience with Infrastructure as Code (IaC) using Bicep.
+This repository contains core Azure Bicep/Terraform Modules modules designed for training resources in the Solutions Architect learning path. The modules help to spin up enterprise-grade labs on Azure, enabling hands-on experience with Infrastructure as Code (IaC) using Bicep.
 
 Each folder represents an automation unit, containing Bicep templates and associated parameter files. Deployments are managed using a `Makefile`, which provides a structured approach to provisioning and deleting resources.
 
