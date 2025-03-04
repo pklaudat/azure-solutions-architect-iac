@@ -17,6 +17,27 @@ spec:
         namespace: flux-system
   install:
     createNamespace: true
+  valuesFrom:
+    - kind: Secret
+      name: argo-cd-protected-parameters
+      valuesKey: argoUrl
+      targetPath: server.ingress.hosts[0].host
+    - kind: Secret
+      name: argo-cd-protected-parameters
+      valuesKey: argoUrl
+      targetPath: configs.cm.url
+    - kind: Secret
+      name: argo-cd-protected-parameters
+      valuesKey: issuer
+      targetPath: configs.cm.oidc.issuer
+    - kind: Secret
+      name: argo-cd-protected-parameters
+      valuesKey: clientId
+      targetPath: configs.cm.oidc.clientID
+    - kind: Secret
+      name: argo-cd-protected-parameters
+      valuesKey: clientSecret
+      targetPath: configs.cm.oidc.clientSecret
   values:
     server:
       ingress:
@@ -24,21 +45,13 @@ spec:
         ingressClassName: webapprouting.kubernetes.azure.com
         annotations:
           kubernetes.io/ingress.class: "webapprouting.kubernetes.azure.com"
-        hosts:
-          - host: "{{ .ValueFrom.secret.argo-cd-protected-parameters.argoUrl }}"
-            paths:
-              - path: /
-                pathType: Prefix
+        tls: false
     configs:
       params:
         server.insecure: "true"
       cm:
-        url: "http://{{ .ValueFrom.secret.argo-cd-protected-parameters.argoUrl }}"
         oidc.config: |
           name: Azure
-          issuer: "{{ .ValueFrom.secret.argo-cd-protected-parameters.issuer }}"
-          clientID: "{{ .ValueFrom.secret.argo-cd-protected-parameters.clientId }}"
-          clientSecret: "{{ .ValueFrom.secret.argo-cd-protected-parameters.clientSecret }}"
           requestedScopes: ["openid", "profile", "email"]
           requestedIDTokenClaims:
             groups:
