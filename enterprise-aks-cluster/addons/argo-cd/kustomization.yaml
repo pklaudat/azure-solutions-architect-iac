@@ -5,6 +5,13 @@ metadata:
   namespace: flux-system
 resources:
   - namespace.yaml
-  - secrets.yaml
   - helmrepository.yaml
   - helmrelease.yaml
+secretGenerator:
+  - name: argo-cd-oidc-secret
+    namespace: argo-cd
+    literals:
+      - oidc.azure.clientSecret=$clientSecret
+      - oidc.azure.clientId=$clientId
+      - oidc.azure.issuer=$issuer
+      - oidc.azure.argoUrl=$argoUrl
