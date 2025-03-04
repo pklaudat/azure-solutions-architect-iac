@@ -2,15 +2,15 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: argo-cd
-  namespace: flux-system  # Flux HelmRelease should be in flux-system
+  namespace: flux-system
 spec:
   releaseName: argo-cd
-  targetNamespace: argo-cd  # This ensures the deployment happens in argo-cd namespace
-  interval: 5m  # Sync every 5 minutes
+  targetNamespace: argo-cd
+  interval: 5m
   chart:
     spec:
       chart: argo-cd
-      version: 7.8.3  # Set a stable version
+      version: 7.8.3
       sourceRef:
         kind: HelmRepository
         name: argo-cd-repo
@@ -21,29 +21,27 @@ spec:
     server:
       ingress:
         enabled: true
-        ingressClassName: webapprouting.kubernetes.azure.com  # Use Azure NGINX Ingress Controller
+        ingressClassName: webapprouting.kubernetes.azure.com
         annotations:
           kubernetes.io/ingress.class: "webapprouting.kubernetes.azure.com"
         hosts:
-          - host: ${argoUrl}  # Use Private DNS Zone name
+          - host: "{{ .ValueFrom.secret.argo-cd-protected-parameters.argoUrl }}"
             paths:
               - path: /
                 pathType: Prefix
     configs:
       params:
-        server.insecure: "true"  # Allow HTTP (No TLS)
+        server.insecure: "true"
       cm:
-        url: http://${argoUrl}  # Use internal Private DNS Zone
+        url: "http://{{ .ValueFrom.secret.argo-cd-protected-parameters.argoUrl }}"
         oidc.config: |
           name: Azure
-          issuer: ${issuer}
-          clientID: ${clientId}
-          clientSecret: ${clientSecret}
+          issuer: "{{ .ValueFrom.secret.argo-cd-protected-parameters.issuer }}"
+          clientID: "{{ .ValueFrom.secret.argo-cd-protected-parameters.clientId }}"
+          clientSecret: "{{ .ValueFrom.secret.argo-cd-protected-parameters.clientSecret }}"
           requestedScopes: ["openid", "profile", "email"]
           requestedIDTokenClaims:
             groups:
               essential: true
-      rbac:
-        policy.default: role:readonly  # Default role for users
     dex:
-      enabled: false  # Disable Dex if using external authentication
+      enabled: false
